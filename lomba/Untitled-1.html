@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindCheck - Login</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #8aa6c1;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.right {
+  flex: 1;
+  background: #e0e0e0;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #5ce1a1;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.switch {
+  margin-top: 10px;
+  text-align: center;
+  cursor: pointer;
+  color: blue;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="left">
+    <h1 style="color:white;">MindCheck</h1>
+  </div>
+
+  <div class="right">
+    
+    <div class="card" id="loginBox">
+      <h2>Login</h2>
+      <input type="text" placeholder="email">
+      <input type="password" placeholder="password">
+      <button onclick="login()">Login</button>
+      <div class="switch" onclick="showRegister()">Belum punya akun?</div>
+    </div>
+
+    <div class="card" id="registerBox" style="display:none;">
+      <h2>Registrasi</h2>
+      <input type="text" placeholder="nama">
+      <input type="text" placeholder="email">
+      <input type="password" placeholder="password">
+      <button onclick="register()">Daftar</button>
+      <div class="switch" onclick="showLogin()">Sudah punya akun?</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function showRegister() {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("registerBox").style.display = "block";
+}
+
+function showLogin() {
+  document.getElementById("loginBox").style.display = "block";
+  document.getElementById("registerBox").style.display = "none";
+}
+
+function login() {
+  alert("Login berhasil (dummy dulu)");
+}
+
+function register() {
+  alert("Registrasi berhasil (dummy dulu)");
+}
+</script>
+
+</body>
+</html>
