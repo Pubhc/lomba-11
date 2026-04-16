@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindCheck Indonesia</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:wght@700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">
+      <span class="logo-icon">🧠</span>
+      <span class="logo-text">MindCheck</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="nav-link active" onclick="showPage('home')">Beranda</a>
+      <a href="#" class="nav-link" onclick="showPage('articles')">Artikel</a>
+      <a href="#" class="nav-link" onclick="showPage('dokter')">Dokter</a>
+      <a href="#" class="nav-link" onclick="showPage('tentang')">Tentang</a>
+    </div>
+    <div class="nav-right">
+      <!-- Kalau belum login -->
+      <div id="nav-guest" class="nav-guest">
+        <button class="btn-login" onclick="openModal('login')">Masuk</button>
+        <button class="btn-register" onclick="openModal('register')">Daftar</button>
+      </div>
+      <!-- Kalau sudah login -->
+      <div id="nav-user" class="nav-user hidden">
+        <button class="profile-btn" id="profileBtn" onclick="toggleSidebar()">
+          <div class="avatar" id="navAvatar">A</div>
+          <span id="navName">User</span>
+          <i class="fa fa-chevron-down" style="font-size:11px;"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== SIDEBAR (Menu Samping) ========== -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+      <div class="sidebar-userinfo">
+        <p class="sidebar-name" id="sidebarName">Nama User</p>
+        <p class="sidebar-email" id="sidebarEmail">user@email.com</p>
+      </div>
+      <button class="sidebar-close" onclick="closeSidebar()"><i class="fa fa-times"></i></button>
+    </div>
+    <ul class="sidebar-menu">
+      <li onclick="showPage('home'); closeSidebar()"><i class="fa fa-home"></i> Beranda</li>
+      <li onclick="showPage('profile-page'); closeSidebar()"><i class="fa fa-user"></i> Profil Saya</li>
+      <li onclick="showPage('history'); closeSidebar()"><i class="fa fa-history"></i> Riwayat</li>
+      <li onclick="showPage('settings'); closeSidebar()"><i class="fa fa-cog"></i> Pengaturan</li>
+    </ul>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()"><i class="fa fa-sign-out-alt"></i> Keluar</button>
+    </div>
+  </div>
+
+  <!-- ========== MODAL LOGIN ========== -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+  <div class="modal" id="authModal">
+    <button class="modal-close" onclick="closeModal()"><i class="fa fa-times"></i></button>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm" class="auth-form">
+      <div class="auth-header">
+        <span class="logo-icon">🧠</span>
+        <h2>Selamat Datang</h2>
+        <p>Masuk ke akun MindCheck kamu</p>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="contoh@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Kata Sandi</label>
+        <div class="input-pass">
+          <input type="password" id="loginPass" placeholder="Masukkan kata sandi" />
+          <i class="fa fa-eye toggle-pass" onclick="togglePass('loginPass', this)"></i>
+        </div>
+      </div>
+      <p class="forgot-link"><a href="#">Lupa kata sandi?</a></p>
+      <button class="btn-auth" onclick="doLogin()">Masuk</button>
+      <p class="switch-auth">Belum punya akun? <a onclick="switchForm('register')">Daftar sekarang</a></p>
+      <div class="divider"><span>atau</span></div>
+      <button class="btn-social"><i class="fab fa-google"></i> Lanjut dengan Google</button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" class="auth-form hidden">
+      <div class="auth-header">
+        <span class="logo-icon">🧠</span>
+        <h2>Buat Akun</h2>
+        <p>Bergabung bersama MindCheck Indonesia</p>
+      </div>
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="regName" placeholder="Nama kamu" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="contoh@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Kata Sandi</label>
+        <div class="input-pass">
+          <input type="password" id="regPass" placeholder="Min. 8 karakter" />
+          <i class="fa fa-eye toggle-pass" onclick="togglePass('regPass', this)"></i>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Konfirmasi Kata Sandi</label>
+        <div class="input-pass">
+          <input type="password" id="regPass2" placeholder="Ulangi kata sandi" />
+          <i class="fa fa-eye toggle-pass" onclick="togglePass('regPass2', this)"></i>
+        </div>
+      </div>
+      <button class="btn-auth" onclick="doRegister()">Daftar</button>
+      <p class="switch-auth">Sudah punya akun? <a onclick="switchForm('login')">Masuk</a></p>
+    </div>
+  </div>
+
+  <!-- ========== TOAST NOTIF ========== -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ========== HALAMAN: HOME ========== -->
+  <div class="page" id="page-home">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">✨ Platform Kesehatan Mental #1 Indonesia</div>
+        <h1 class="hero-title">MindCheck<br/><span>Indonesia</span></h1>
+        <p class="hero-desc">Kami hadir untuk membantu kamu mengenal diri lebih dalam, merawat kesehatan mental dengan pendekatan yang hangat dan profesional.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="openModal('register')">Mulai Sekarang</button>
+          <button class="btn-outline" onclick="showPage('articles')">Baca Artikel</button>
+        </div>
+      </div>
+      <div class="hero-illustration">
+        <div class="hero-card floating">
+          <i class="fa fa-brain" style="font-size:2.5rem;color:#4ade80;"></i>
+          <p>Tes Kesehatan Mental</p>
+        </div>
+        <div class="hero-card floating delay-1">
+          <i class="fa fa-heart" style="font-size:2.5rem;color:#f87171;"></i>
+          <p>Konseling Online</p>
+        </div>
+        <div class="hero-card floating delay-2">
+          <i class="fa fa-user-md" style="font-size:2.5rem;color:#60a5fa;"></i>
+          <p>Dokter Berpengalaman</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ulasan Section -->
+    <section class="section-articles">
+      <h2 class="section-title">Artikel Kesehatan Mental</h2>
+      <div class="articles-grid">
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#6ee7b7,#3b82f6)">
+            <i class="fa fa-spa"></i>
+          </div>
+          <div class="article-body">
+            <span class="article-tag">Mindfulness</span>
+            <h3>Cara Mengelola Stres di Era Modern</h3>
+            <p>Pelajari teknik-teknik efektif untuk menjaga ketenangan pikiran di tengah kesibukan sehari-hari.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#fde68a,#f59e0b)">
+            <i class="fa fa-smile"></i>
+          </div>
+          <div class="article-body">
+            <span class="article-tag">Self-Care</span>
+            <h3>Pentingnya Istirahat untuk Kesehatan Mental</h3>
+            <p>Mengapa tidur berkualitas dan waktu istirahat adalah investasi terbaik untuk pikiran yang sehat.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#c4b5fd,#7c3aed)">
+            <i class="fa fa-users"></i>
+          </div>
+          <div class="article-body">
+            <span class="article-tag">Sosial</span>
+            <h3>Membangun Koneksi Sosial yang Sehat</h3>
+            <p>Hubungan yang positif adalah pilar utama kesehatan mental yang sering kita lupakan.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dokter Section -->
+    <section class="section-dokter">
+      <h2 class="section-title">Dokter & Psikolog</h2>
+      <div class="dokter-grid">
+        <div class="dokter-card">
+          <div class="dokter-img"><i class="fa fa-user-md"></i></div>
+          <h3>dr. Anisa Putri</h3>
+          <p>Psikiater</p>
+          <span class="rating">⭐ 4.9</span>
+          <button class="btn-konsul" onclick="openModal('login')">Konsultasi</button>
+        </div>
+        <div class="dokter-card">
+          <div class="dokter-img" style="background:linear-gradient(135deg,#60a5fa,#2563eb)"><i class="fa fa-user-md"></i></div>
+          <h3>Budi Santoso, M.Psi</h3>
+          <p>Psikolog Klinis</p>
+          <span class="rating">⭐ 4.8</span>
+          <button class="btn-konsul" onclick="openModal('login')">Konsultasi</button>
+        </div>
+        <div class="dokter-card">
+          <div class="dokter-img" style="background:linear-gradient(135deg,#f9a8d4,#ec4899)"><i class="fa fa-user-md"></i></div>
+          <h3>dr. Citra Dewi</h3>
+          <p>Psikiater Anak</p>
+          <span class="rating">⭐ 5.0</span>
+          <button class="btn-konsul" onclick="openModal('login')">Konsultasi</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========== HALAMAN: HISTORY ========== -->
+  <div class="page hidden" id="page-history">
+    <div class="inner-page">
+      <div class="page-header">
+        <button class="btn-back" onclick="showPage('home')"><i class="fa fa-arrow-left"></i></button>
+        <h2>Riwayat Aktivitas</h2>
+      </div>
+      <div class="history-tabs">
+        <button class="htab active" onclick="switchHistoryTab('tes', this)">Tes Mental</button>
+        <button class="htab" onclick="switchHistoryTab('konsul', this)">Konsultasi</button>
+        <button class="htab" onclick="switchHistoryTab('artikel', this)">Artikel Dibaca</button>
+      </div>
+      <div class="history-content" id="historyContent"></div>
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: SETTINGS ========== -->
+  <div class="page hidden" id="page-settings">
+    <div class="inner-page">
+      <div class="page-header">
+        <button class="btn-back" onclick="showPage('home')"><i class="fa fa-arrow-left"></i></button>
+        <h2>Pengaturan</h2>
+      </div>
+      <div class="settings-list">
+        <div class="settings-section">
+          <h3>Akun</h3>
+          <div class="settings-item">
+            <div><i class="fa fa-user"></i> Ubah Nama</div>
+            <input type="text" id="settingName" placeholder="Nama baru..." />
+          </div>
+          <div class="settings-item">
+            <div><i class="fa fa-envelope"></i> Ubah Email</div>
+            <input type="email" id="settingEmail" placeholder="Email baru..." />
+          </div>
+          <div class="settings-item">
+            <div><i class="fa fa-lock"></i> Ubah Kata Sandi</div>
+            <input type="password" id="settingPass" placeholder="Kata sandi baru..." />
+          </div>
+          <button class="btn-save" onclick="saveSettings()">Simpan Perubahan</button>
+        </div>
+        <div class="settings-section">
+          <h3>Notifikasi</h3>
+          <div class="settings-toggle">
+            <span><i class="fa fa-bell"></i> Notifikasi Email</span>
+            <label class="toggle"><input type="checkbox" id="notifEmail" checked/><span class="slider"></span></label>
+          </div>
+          <div class="settings-toggle">
+            <span><i class="fa fa-mobile"></i> Notifikasi Push</span>
+            <label class="toggle"><input type="checkbox" id="notifPush"/><span class="slider"></span></label>
+          </div>
+          <div class="settings-toggle">
+            <span><i class="fa fa-moon"></i> Mode Gelap</span>
+            <label class="toggle"><input type="checkbox" id="darkMode" onchange="toggleDark(this)"/><span class="slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-section danger-zone">
+          <h3>Zona Berbahaya</h3>
+          <button class="btn-danger" onclick="confirmDelete()"><i class="fa fa-trash"></i> Hapus Akun</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: PROFILE ========== -->
+  <div class="page hidden" id="page-profile-page">
+    <div class="inner-page">
+      <div class="page-header">
+        <button class="btn-back" onclick="showPage('home')"><i class="fa fa-arrow-left"></i></button>
+        <h2>Profil Saya</h2>
+      </div>
+      <div class="profile-card">
+        <div class="profile-avatar-big" id="profileAvatarBig">A</div>
+        <h2 id="profileFullName">Nama User</h2>
+        <p id="profileFullEmail">user@email.com</p>
+        <div class="profile-stats">
+          <div class="pstat"><span id="pStatTes">3</span><small>Tes Selesai</small></div>
+          <div class="pstat"><span id="pStatKonsul">1</span><small>Konsultasi</small></div>
+          <div class="pstat"><span id="pStatArtikel">12</span><small>Artikel Dibaca</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: ARTICLES ========== -->
+  <div class="page hidden" id="page-articles">
+    <div class="inner-page">
+      <div class="page-header">
+        <button class="btn-back" onclick="showPage('home')"><i class="fa fa-arrow-left"></i></button>
+        <h2>Artikel Kesehatan Mental</h2>
+      </div>
+      <div class="articles-grid full">
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#6ee7b7,#3b82f6)"><i class="fa fa-spa"></i></div>
+          <div class="article-body">
+            <span class="article-tag">Mindfulness</span>
+            <h3>Cara Mengelola Stres di Era Modern</h3>
+            <p>Pelajari teknik-teknik efektif untuk menjaga ketenangan pikiran di tengah kesibukan sehari-hari.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#fde68a,#f59e0b)"><i class="fa fa-smile"></i></div>
+          <div class="article-body">
+            <span class="article-tag">Self-Care</span>
+            <h3>Pentingnya Istirahat untuk Kesehatan Mental</h3>
+            <p>Mengapa tidur berkualitas dan waktu istirahat adalah investasi terbaik untuk pikiran yang sehat.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#c4b5fd,#7c3aed)"><i class="fa fa-users"></i></div>
+          <div class="article-body">
+            <span class="article-tag">Sosial</span>
+            <h3>Membangun Koneksi Sosial yang Sehat</h3>
+            <p>Hubungan yang positif adalah pilar utama kesehatan mental yang sering kita lupakan.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#fca5a5,#ef4444)"><i class="fa fa-heart"></i></div>
+          <div class="article-body">
+            <span class="article-tag">Emosi</span>
+            <h3>Mengenali dan Mengekspresikan Emosi</h3>
+            <p>Belajar untuk memahami dan mengungkapkan perasaan dengan cara yang sehat dan konstruktif.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#a5f3fc,#0891b2)"><i class="fa fa-balance-scale"></i></div>
+          <div class="article-body">
+            <span class="article-tag">Work-Life Balance</span>
+            <h3>Menjaga Keseimbangan Kerja dan Kehidupan</h3>
+            <p>Tips praktis untuk tidak terjebak dalam hustle culture dan tetap menjaga kesehatan mental.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+        <div class="article-card">
+          <div class="article-img" style="background:linear-gradient(135deg,#d9f99d,#65a30d)"><i class="fa fa-seedling"></i></div>
+          <div class="article-body">
+            <span class="article-tag">Pertumbuhan</span>
+            <h3>Membangun Resiliensi Mental yang Kuat</h3>
+            <p>Strategi untuk menghadapi tantangan hidup dan bangkit lebih kuat dari sebelumnya.</p>
+            <a href="#">Baca selengkapnya →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: DOKTER ========== -->
+  <div class="page hidden" id="page-dokter">
+    <div class="inner-page">
+      <div class="page-header">
+        <button class="btn-back" onclick="showPage('home')"><i class="fa fa-arrow-left"></i></button>
+        <h2>Dokter & Psikolog</h2>
+      </div>
+      <div class="dokter-grid full">
+        <div class="dokter-card">
+          <div class="dokter-img"><i class="fa fa-user-md"></i></div>
+          <h3>dr. Anisa Putri</h3>
+          <p>Psikiater</p>
+          <span class="rating">⭐ 4.9 · 120 ulasan</span>
+          <button class="btn-konsul" onclick="openModal('login')">Konsultasi</button>
+        </div>
+        <div class="dokter-card">
+          <div class="dokter-img" style="background:linear-gradient(135deg,#60a5fa,#2563eb)"><i class="fa fa-user-md"></i></div>
+          <h3>Budi Santoso, M.Psi</h3>
+          <p>Psikolog Klinis</p>
+          <span class="rating">⭐ 4.8 · 98 ulasan</span>
+          <button class="btn-konsul" onclick="openModal('login')">Konsultasi</button>
+        </div>
+        <div class="dokter-card">
+          <div class="dokter-img" style="background:linear-gradient(135deg,#f9a8d4,#ec4899)"><i class="fa fa-user-md"></i></div>
+          <h3>dr. Citra Dewi</h3>
+          <p>Psikiater Anak</p>
+          <span class="rating">⭐ 5.0 · 45 ulasan</span>
+          <button class="btn-konsul" onclick="openModal('login')">Konsultasi</button>
+        </div>
+        <div class="dokter-card">
+          <div class="dokter-img" style="background:linear-gradient(135deg,#fcd34d,#d97706)"><i class="fa fa-user-md"></i></div>
+          <h3>Reza Firmansyah, M.Psi</h3>
+          <p>Psikolog Remaja</p>
+          <span class="rating">⭐ 4.7 · 67 ulasan</span>
+          <button class="btn-konsul" onclick="openModal('login')">Konsultasi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: TENTANG ========== -->
+  <div class="page hidden" id="page-tentang">
+    <div class="inner-page">
+      <div class="page-header">
+        <button class="btn-back" onclick="showPage('home')"><i class="fa fa-arrow-left"></i></button>
+        <h2>Tentang MindCheck</h2>
+      </div>
+      <div class="tentang-content">
+        <div class="tentang-hero">
+          <span style="font-size:4rem;">🧠</span>
+          <h2>MindCheck Indonesia</h2>
+          <p>Platform kesehatan mental terpercaya sejak 2022</p>
+        </div>
+        <div class="tentang-desc">
+          <p>MindCheck Indonesia hadir dengan misi untuk mendekatkan layanan kesehatan mental kepada masyarakat Indonesia. Kami percaya bahwa setiap orang berhak mendapatkan akses terhadap kesehatan mental yang berkualitas.</p>
+          <p>Dengan tim psikiater, psikolog, dan konselor berpengalaman, kami siap mendampingi perjalanan kesehatan mental kamu setiap saat.</p>
+        </div>
+        <div class="tentang-stats">
+          <div class="tstat"><strong>50K+</strong><small>Pengguna Aktif</small></div>
+          <div class="tstat"><strong>200+</strong><small>Tenaga Ahli</small></div>
+          <div class="tstat"><strong>4.9★</strong><small>Rating Rata-rata</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
