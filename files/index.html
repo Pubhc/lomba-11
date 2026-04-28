@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:wght@700;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </head>
 <body>
 
@@ -19,7 +20,10 @@
     <div class="nav-links">
       <a href="#" class="nav-link active" onclick="showPage('home')">Beranda</a>
       <a href="#" class="nav-link" onclick="showPage('articles')">Artikel</a>
+      <a href="#" class="nav-link nav-link-tes" onclick="showPage('tes')">🧩 Tes Mental</a>
       <a href="#" class="nav-link" onclick="showPage('dokter')">Dokter</a>
+      <a href="#" class="nav-link" onclick="showPage('jadwal')">📅 Jadwal</a>
+      <a href="#" class="nav-link" onclick="showPage('maps')"><i class="fa fa-map-marker-alt" style="color:#22c55e;margin-right:4px;"></i>Peta</a>
       <a href="#" class="nav-link" onclick="showPage('tentang')">Tentang</a>
     </div>
     <div class="nav-right">
@@ -30,6 +34,10 @@
       </div>
       <!-- Kalau sudah login -->
       <div id="nav-user" class="nav-user hidden">
+        <button class="notif-btn" onclick="showPage('jadwal')" title="Notifikasi Jadwal" id="notifBtn">
+          <i class="fa fa-bell"></i>
+          <span class="notif-dot hidden" id="notifDot"></span>
+        </button>
         <button class="profile-btn" id="profileBtn" onclick="toggleSidebar()">
           <div class="avatar" id="navAvatar">A</div>
           <span id="navName">User</span>
@@ -52,7 +60,12 @@
     </div>
     <ul class="sidebar-menu">
       <li onclick="showPage('home'); closeSidebar()"><i class="fa fa-home"></i> Beranda</li>
+      <li onclick="showPage('tes'); closeSidebar()"><i class="fa fa-clipboard-list"></i> Tes Mental</li>
+      <li onclick="showPage('rekomendasi'); closeSidebar()"><i class="fa fa-star"></i> Rekomendasi</li>
+      <li onclick="showPage('jadwal'); closeSidebar()"><i class="fa fa-calendar-alt"></i> Jadwal Saya</li>
+      <li onclick="showPage('chat'); closeSidebar()"><i class="fa fa-comments"></i> Chat</li>
       <li onclick="showPage('profile-page'); closeSidebar()"><i class="fa fa-user"></i> Profil Saya</li>
+      <li onclick="showPage('maps'); closeSidebar()"><i class="fa fa-map-marker-alt"></i> Peta Psikiater</li>
       <li onclick="showPage('history'); closeSidebar()"><i class="fa fa-history"></i> Riwayat</li>
       <li onclick="showPage('settings'); closeSidebar()"><i class="fa fa-cog"></i> Pengaturan</li>
     </ul>
@@ -137,8 +150,8 @@
         <h1 class="hero-title">MindCheck<br/><span>Indonesia</span></h1>
         <p class="hero-desc">Kami hadir untuk membantu kamu mengenal diri lebih dalam, merawat kesehatan mental dengan pendekatan yang hangat dan profesional.</p>
         <div class="hero-btns">
-          <button class="btn-primary" onclick="openModal('register')">Mulai Sekarang</button>
-          <button class="btn-outline" onclick="showPage('articles')">Baca Artikel</button>
+          <button class="btn-primary" onclick="showPage('tes')">🧩 Mulai Tes Mental</button>
+          <button class="btn-outline" onclick="showPage('maps')"><i class="fa fa-map-marker-alt"></i> Cari Psikiater</button>
         </div>
       </div>
       <div class="hero-illustration">
@@ -441,6 +454,319 @@
     </div>
   </div>
 
+  <!-- ========== HALAMAN: TES MENTAL ========== -->
+  <div class="page hidden" id="page-tes">
+    <div class="tes-wrap">
+
+      <!-- STEP 0: Landing Tes -->
+      <div class="tes-step" id="tes-step-0">
+        <div class="tes-landing">
+          <div class="tes-landing-icon">🧩</div>
+          <h1>MindCheck <span>Tes Mental</span></h1>
+          <p>Jawab beberapa pertanyaan singkat. Kami akan bantu kamu mengenali kondisi diri dan mengarahkan ke tenaga ahli yang tepat — Psikolog atau Psikiater.</p>
+          <div class="tes-landing-pills">
+            <span>⏱️ Hanya 2–3 menit</span>
+            <span>🔒 Rahasia & aman</span>
+            <span>🎯 Rekomendasi personal</span>
+          </div>
+          <button class="btn-tes-start" onclick="tesMulai()">Mulai Tes Sekarang →</button>
+          <p class="tes-disclaimer">⚠️ Tes ini bukan diagnosis medis. Hasilnya hanya panduan awal untuk membantu kamu mencari bantuan yang tepat.</p>
+        </div>
+      </div>
+
+      <!-- STEP 1–N: Pertanyaan -->
+      <div class="tes-step hidden" id="tes-step-questions">
+        <div class="tes-progress-bar-wrap">
+          <div class="tes-progress-bar" id="tesProgressBar"></div>
+        </div>
+        <div class="tes-step-label" id="tesStepLabel">Pertanyaan 1 dari 8</div>
+
+        <div class="tes-question-card" id="tesQuestionCard">
+          <!-- Diisi oleh JS -->
+        </div>
+
+        <div class="tes-nav-btns">
+          <button class="btn-tes-back" id="tesBtnBack" onclick="tesPrev()">← Kembali</button>
+          <button class="btn-tes-next" id="tesBtnNext" onclick="tesNext()" disabled>Lanjut →</button>
+        </div>
+      </div>
+
+      <!-- STEP HASIL -->
+      <div class="tes-step hidden" id="tes-step-hasil">
+        <div class="tes-hasil-wrap" id="tesHasilWrap">
+          <!-- Diisi oleh JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: JADWAL ========== -->
+  <div class="page hidden" id="page-jadwal">
+    <div class="inner-page">
+      <div class="page-header">
+        <button class="btn-back" onclick="showPage('home')"><i class="fa fa-arrow-left"></i></button>
+        <h2>📅 Jadwal Konsultasi</h2>
+      </div>
+
+      <!-- Tab: Pasien vs Dokter (simulasi mode) -->
+      <div class="jadwal-mode-bar">
+        <button class="jmode active" id="jmodeUser" onclick="setJadwalMode('user', this)">
+          <i class="fa fa-user"></i> Sebagai Pasien
+        </button>
+        <button class="jmode" id="jmodeDoc" onclick="setJadwalMode('dokter', this)">
+          <i class="fa fa-user-md"></i> Simulasi Mode Dokter
+        </button>
+      </div>
+
+      <!-- ===== MODE PASIEN ===== -->
+      <div id="jadwal-user-view">
+        <div class="jadwal-booking-card">
+          <h3>🩺 Buat Jadwal Konsultasi Baru</h3>
+          <p>Pilih dokter, tanggal, dan waktu yang kamu inginkan</p>
+
+          <div class="form-group" style="margin-top:1rem;">
+            <label>Pilih Dokter</label>
+            <select id="bookDokter" class="jadwal-select" onchange="updateSlotTime()">
+              <option value="">-- Pilih dokter --</option>
+              <option value="1">dr. Anisa Putri — Psikiater</option>
+              <option value="2">Budi Santoso, M.Psi — Psikolog</option>
+              <option value="3">dr. Citra Dewi — Psikiater Anak</option>
+              <option value="4">Sari Dewi, S.Psi — Psikolog Klinis</option>
+              <option value="5">dr. Hendra Wijaya — Psikiater</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Tanggal</label>
+            <input type="date" id="bookTanggal" class="jadwal-input" oninput="updateSlotTime()" />
+          </div>
+
+          <div class="form-group">
+            <label>Pilih Waktu</label>
+            <div class="slot-grid" id="slotGrid">
+              <p style="color:var(--gray);font-size:0.85rem;">Pilih dokter & tanggal terlebih dahulu</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Keluhan / Catatan untuk Dokter</label>
+            <textarea id="bookKeluhan" class="jadwal-textarea" placeholder="Ceritakan singkat apa yang kamu rasakan..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Jenis Konsultasi</label>
+            <div class="jenis-grid">
+              <label class="jenis-option">
+                <input type="radio" name="jenis" value="online" checked />
+                <span>💻 Online (Video Call)</span>
+              </label>
+              <label class="jenis-option">
+                <input type="radio" name="jenis" value="offline" />
+                <span>🏥 Tatap Muka</span>
+              </label>
+            </div>
+          </div>
+
+          <button class="btn-book-submit" onclick="submitBooking()">
+            <i class="fa fa-paper-plane"></i> Kirim Permintaan Jadwal
+          </button>
+        </div>
+
+        <!-- Daftar Jadwal User -->
+        <div class="jadwal-list-section">
+          <h3>📋 Jadwal Kamu</h3>
+          <div id="userJadwalList"></div>
+        </div>
+      </div>
+
+      <!-- ===== MODE DOKTER (Simulasi) ===== -->
+      <div id="jadwal-dokter-view" class="hidden">
+        <div class="dokter-mode-banner">
+          <span>🩺</span>
+          <div>
+            <strong>Mode Simulasi Dokter</strong>
+            <p>Lihat dan kelola permintaan jadwal dari pasien</p>
+          </div>
+        </div>
+        <div id="dokterJadwalList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: REKOMENDASI ========== -->
+  <div class="page hidden" id="page-rekomendasi">
+    <div class="inner-page">
+      <div class="page-header">
+        <button class="btn-back" onclick="showPage('home')"><i class="fa fa-arrow-left"></i></button>
+        <h2>⭐ Rekomendasi Untukmu</h2>
+      </div>
+
+      <div class="rek-intro">
+        <div class="rek-intro-icon">✨</div>
+        <h3>Dipersonalisasi Khusus Untukmu</h3>
+        <p>Berdasarkan hasil tes mental, riwayat, dan profilmu — kami rekomendasikan dokter & konten yang paling relevan</p>
+        <button class="btn-rek-refresh" onclick="generateRekomendasi()">
+          <i class="fa fa-sync-alt"></i> Perbarui Rekomendasi
+        </button>
+      </div>
+
+      <div id="rekomendasiContent">
+        <!-- Diisi JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: CHAT ========== -->
+  <div class="page hidden" id="page-chat">
+    <div class="chat-layout">
+
+      <!-- Panel Kiri: List chat -->
+      <div class="chat-sidebar" id="chatSidebar">
+        <div class="chat-sidebar-header">
+          <h3>💬 Pesan</h3>
+          <button class="btn-new-chat" onclick="showNewChatModal()">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
+        <div class="chat-search">
+          <i class="fa fa-search"></i>
+          <input type="text" placeholder="Cari percakapan..." oninput="filterChat(this.value)" />
+        </div>
+        <div class="chat-list" id="chatList">
+          <!-- Diisi JS -->
+        </div>
+      </div>
+
+      <!-- Panel Kanan: Area Chat -->
+      <div class="chat-main" id="chatMain">
+
+        <!-- Empty state -->
+        <div class="chat-empty" id="chatEmpty">
+          <span>💬</span>
+          <h3>Pilih Percakapan</h3>
+          <p>Pilih dokter dari daftar kiri untuk mulai berkonsultasi</p>
+          <button class="btn-start-chat" onclick="showNewChatModal()">Mulai Chat Baru</button>
+        </div>
+
+        <!-- Area chat aktif -->
+        <div class="chat-active hidden" id="chatActive">
+          <!-- Header -->
+          <div class="chat-header" id="chatHeader">
+            <button class="chat-back-btn" onclick="closeChatActive()"><i class="fa fa-arrow-left"></i></button>
+            <div class="chat-header-avatar" id="chatHeaderAvatar"></div>
+            <div class="chat-header-info">
+              <h4 id="chatHeaderName"></h4>
+              <span id="chatHeaderStatus"></span>
+            </div>
+            <div class="chat-header-actions">
+              <button onclick="openVideoCall()" title="Video Call"><i class="fa fa-video"></i></button>
+              <button onclick="openScheduleFromChat()" title="Buat Jadwal"><i class="fa fa-calendar-plus"></i></button>
+            </div>
+          </div>
+
+          <!-- Messages -->
+          <div class="chat-messages" id="chatMessages"></div>
+
+          <!-- Input -->
+          <div class="chat-input-bar">
+            <button class="chat-attach" title="Lampiran"><i class="fa fa-paperclip"></i></button>
+            <input type="text" id="chatInput" placeholder="Ketik pesan..." onkeydown="handleChatKey(event)" />
+            <button class="chat-send" onclick="sendMessage()"><i class="fa fa-paper-plane"></i></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal New Chat -->
+  <div class="modal-overlay" id="newChatOverlay" onclick="closeNewChatModal()"></div>
+  <div class="modal" id="newChatModal">
+    <button class="modal-close" onclick="closeNewChatModal()"><i class="fa fa-times"></i></button>
+    <div style="margin-top:8px;">
+      <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--navy);margin-bottom:1rem;">Mulai Chat Baru</h3>
+      <p style="color:var(--gray);font-size:0.85rem;margin-bottom:1.2rem;">Pilih dokter untuk memulai percakapan</p>
+      <div id="newChatDokterList" class="new-chat-list"></div>
+    </div>
+  </div>
+
+  <!-- ========== HALAMAN: MAPS ========== -->
+  <div class="page hidden" id="page-maps">
+    <div class="maps-layout">
+
+      <!-- PANEL KIRI: Daftar & Filter -->
+      <div class="maps-panel" id="mapsPanel">
+        <div class="maps-panel-header">
+          <h2><i class="fa fa-map-marker-alt"></i> Psikiater Terdekat</h2>
+          <div class="maps-location-bar" id="mapsLocationBar">
+            <i class="fa fa-circle-notch fa-spin"></i>
+            <span>Mendeteksi lokasi...</span>
+          </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="maps-search-wrap">
+          <div class="maps-search-box">
+            <i class="fa fa-search"></i>
+            <input type="text" id="mapsSearch" placeholder="Cari nama dokter..." oninput="filterDokterList()" />
+          </div>
+          <div class="maps-filters">
+            <button class="mfilter active" onclick="setFilter('semua', this)">Semua</button>
+            <button class="mfilter" onclick="setFilter('psikiater', this)">Psikiater</button>
+            <button class="mfilter" onclick="setFilter('psikolog', this)">Psikolog</button>
+            <button class="mfilter" onclick="setFilter('konselor', this)">Konselor</button>
+          </div>
+        </div>
+
+        <!-- Sort & Count -->
+        <div class="maps-sort-bar">
+          <span id="dokterCount">0 dokter ditemukan</span>
+          <select id="sortSelect" onchange="sortDokterList()">
+            <option value="jarak">Terdekat</option>
+            <option value="rating">Rating Tertinggi</option>
+            <option value="nama">Nama A-Z</option>
+          </select>
+        </div>
+
+        <!-- List Dokter -->
+        <div class="maps-dokter-list" id="mapsDokterList">
+          <div class="maps-loading"><i class="fa fa-circle-notch fa-spin"></i> Memuat data...</div>
+        </div>
+      </div>
+
+      <!-- PANEL KANAN: Peta -->
+      <div class="maps-map-wrap">
+        <div id="mainMap"></div>
+
+        <!-- Tombol aksi di atas peta -->
+        <div class="maps-map-controls">
+          <button class="map-ctrl-btn" id="btnMyLoc" onclick="goToMyLocation()" title="Ke lokasi saya">
+            <i class="fa fa-crosshairs"></i>
+          </button>
+          <button class="map-ctrl-btn" onclick="toggleMapPanel()" title="Tampilkan/sembunyikan panel" id="btnTogglePanel">
+            <i class="fa fa-list"></i>
+          </button>
+        </div>
+
+        <!-- Popup detail dokter di bawah peta -->
+        <div class="maps-detail-card hidden" id="mapsDetailCard">
+          <button class="detail-close" onclick="closeDokterDetail()"><i class="fa fa-times"></i></button>
+          <div class="detail-inner" id="detailInner"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal Detail Dokter (Mobile) -->
+  <div class="modal-overlay" id="dokterModalOverlay" onclick="closeDokterModal()"></div>
+  <div class="modal dokter-modal" id="dokterModal">
+    <button class="modal-close" onclick="closeDokterModal()"><i class="fa fa-times"></i></button>
+    <div id="dokterModalContent"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
